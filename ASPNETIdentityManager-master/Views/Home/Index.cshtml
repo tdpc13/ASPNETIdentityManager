@@ -1,0 +1,58 @@
+﻿@{
+    ViewData["Title"] = "Users";
+}
+@using Microsoft.AspNetCore.Identity
+@using ASPNETIdentityManager.Entities
+@inject SignInManager<User> SignInManager
+@inject ASPNETIdentityManager.Contexts.UserDBContext userDBContext
+@inject UserManager<User> UserManager
+
+
+@model ASPNETIdentityManager.Models.UsersAndRolesViewModel
+
+<div class="text-center">
+    <p class="h1">Villaggio vacanze Piemonte</p>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <p class="h1">Benvenuto @UserManager.GetUserName(User)</p>
+    }
+    
+    @if (!SignInManager.IsSignedIn(User))
+        {
+            <p class="h3">Loggati per poter prenotare</p>
+        }
+
+</div>
+<p>
+    Ibiza
+    pacchetto Gold
+    @if (SignInManager.IsSignedIn(User))
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <button id="PrenotaButton" class="btn btn-success btn-sm" onclick="prenota('@Url.Action("Prenota", "Home")', { addOrDelete:'Add' });">Prenota</button>
+            </div>
+        </div>
+    </div>
+}
+
+</p>
+<hr />
+<p>
+    Ibiza
+    pacchetto silver
+    @if (SignInManager.IsSignedIn(User))
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <button id="PrenotaButton" class="btn btn-success btn-sm" onclick="prenota('@Url.Action("Prenota", "Home")', { addOrDelete:'Add' });">Prenota</button>
+            </div>
+        </div>
+    </div>
+}
+
+</p>
+
+

@@ -1,0 +1,83 @@
+﻿@{
+    ViewData["Title"] = "Roles";
+}
+@using Microsoft.AspNetCore.Identity
+@using ASPNETIdentityManager.Entities
+
+@inject ASPNETIdentityManager.Contexts.UserDBContext userDBContext
+
+@model ASPNETIdentityManager.Models.UsersAndRolesViewModel
+
+<div class="text-center">
+    <form asp-action="Index" asp-controller="Roles" method="get">
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>Role Name</label>
+                        <input name="roleName" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <br />
+                        <input type="submit" class="btn btn-primary" value="Search" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <h1>Roles</h1>
+    <div class="container">
+        @foreach (Role role in Model.Roles)
+        {
+            <div class="row">
+                <div class="col-12" style="text-align:left">
+                    <h3>@role.IdentityRole.Name</h3>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-4">
+                                <div>ID: @role.IdentityRole.Id</div>
+                                <div>Name: @role.IdentityRole.Name</div>
+                                <div>Normalized Name: @role.IdentityRole.NormalizedName</div>
+                                @{
+                                    string DeleteRoleButtonId = role.IdentityRole.Id + "DeleteRoleButton";
+                                    <button id="@DeleteRoleButtonId" class="btn btn-danger btn-sm" onclick="showConfirmationModalForRoles('@Url.Action("DeleteRole", "Roles")', { addOrDelete:'Delete', roleId: '@role.IdentityRole.Id' });">Delete Role</button>
+                                }
+                            </div>
+                            <div class="col-4">
+                                <h4>Role claims</h4>
+                                @{
+                                    string RoleClaimsID = role.IdentityRole.Id + "RoleClaims";
+                                    <div id="@RoleClaimsID">
+                                        @foreach (IdentityRoleClaim<string> roleclaim in role.RoleClaims)
+                                        {
+                                            string RemoveRoleClaimButtonId = role.IdentityRole.Id + "RemoveRoleClaimButton";
+                                            <div style="border-bottom: 1px solid black;">
+                                                @roleclaim.ClaimType &nbsp; @roleclaim.ClaimValue
+                                                <button id="@RemoveRoleClaimButtonId" class="btn btn-danger btn-sm" onclick="showConfirmationModalForClaims('@Url.Action("RemoveClaimFromRole", "Roles")', { addOrDelete:'Remove', roleID: '@role.IdentityRole.Id', claimType: '@roleclaim.ClaimType', claimValue: '@roleclaim.ClaimValue' });">Remove Claim</button>
+                                            </div>
+                                            <br />
+                                        }
+                                    </div>
+                                    <div>
+                                        @{
+                                            string AddRoleClaimButtonId = role.IdentityRole.Id + "AddRoleClaimButton";
+                                            <button id="@AddRoleClaimButtonId" class="btn btn-success btn-sm" onclick="showConfirmationModalForClaims('@Url.Action("AddClaimToRole", "Roles")', { addOrDelete:'Add', roleID: '@role.IdentityRole.Id' });">Add Claim</button>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-12">
+                <button id="CreateRoleButton" class="btn btn-success btn-sm" onclick="showConfirmationModalForRoles('@Url.Action("CreateRole", "Roles")', { addOrDelete:'Add' });">Create Role</button>
+            </div>
+        </div>
+    </div>
+</div>

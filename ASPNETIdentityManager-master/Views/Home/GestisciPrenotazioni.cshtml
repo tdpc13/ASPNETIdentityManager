@@ -1,0 +1,127 @@
+﻿@{
+    ViewData["Title"] = "Gestisci Prenotazioni";
+}
+@using Microsoft.AspNetCore.Identity
+@using ASPNETIdentityManager.Entities
+
+@inject ASPNETIdentityManager.Contexts.UserDBContext userDBContext
+
+@model ASPNETIdentityManager.Models.UsersAndRolesViewModel
+
+<div class="text-center">
+    <form asp-action="Index" asp-controller="Home" method="get">
+        <div class="container">
+            <div class="row">
+                <div class="h1 col-12" style="padding-bottom: 50px">Gestisci Prenotazioni</div>
+                
+                <div class="col-4">
+                    <div class="form-group">
+                        <label>UserName</label>
+                        <input name="userName" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input name="email" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <br />
+                        <input type="submit" class="btn btn-primary" value="Search" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    
+    <div class="container">
+        @foreach (User user in Model.Users)
+        {
+            <div class="row">
+                <div class="col-12" style="text-align:left">
+                    <h3>@user.UserName</h3>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-4">
+                                <div>ID: @user.Id</div>
+                                <div>Email: @user.Email</div>
+                                @{
+                                    string DeleteUserButtonId = user.Id + "DeleteUserButton";
+                                    <button id="@DeleteUserButtonId" class="btn btn-danger btn-sm" onclick="showConfirmationModalForUsers('@Url.Action("DeleteUser", "Home")', { addOrDelete:'Delete', userId: '@user.Id' });">Delete User</button>
+                                    string EditUserButtonId = user.Id + "EditUserButton";
+                                    <button id="@EditUserButtonId" class="btn btn-warning btn-sm" onclick="showConfirmationModalForUsers('@Url.Action("EditUser", "Home")', { addOrDelete:'Edit', userId: '@user.Id' });">Edit User</button>
+
+                                }
+                            </div>
+                            <div class="col-4">
+                                <h4>User claims</h4>
+                                @{
+                                    string UserClaimsID = user.Id + "UserClaims";
+                                    <div id="@UserClaimsID">
+                                        @foreach (IdentityUserClaim<string> claim in user.UserClaims)
+                                        {
+                                            string RemoveUserClaimButtonId = user.Id + "RemoveUserClaimButton";
+                                            <div style="border-bottom: 1px solid black;">
+                                                @claim.ClaimType &nbsp; @claim.ClaimValue
+                                                <button id="@RemoveUserClaimButtonId" class="btn btn-danger btn-sm" onclick="showConfirmationModalForClaims('@Url.Action("RemoveClaimFromUser", "Home")', { addOrDelete:'Remove', userID: '@user.Id', claimType: '@claim.ClaimType', claimValue: '@claim.ClaimValue' });">Remove Claim</button>
+                                            </div>
+                                            <br />
+                                        }
+                                    </div>
+                                    <div>
+                                        @{
+                                            string AddUserClaimUserButtonId = user.Id + "AddUserClaimButton";
+                                            <button id="@AddUserClaimUserButtonId" class="btn btn-success btn-sm" onclick="showConfirmationModalForClaims('@Url.Action("AddClaimToUser", "Home")', { addOrDelete:'Add', userID: '@user.Id' });">Add Claim</button>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-4">
+                                <h4>User roles</h4>
+                                @{
+                                    string UserRolesID = user.Id + "UserRoles";
+                                    <div id="@UserRolesID">
+                                        @foreach (Role role in user.UserRoles)
+                                        {
+                                            <div style="border-bottom: 1px solid black;">
+                                                <h5>@role.IdentityRole.Name</h5>
+                                                <h6>Role claims</h6>
+                                                @foreach (IdentityRoleClaim<string> roleclaim in role.RoleClaims)
+                                                {
+                                                    <div>
+                                                        @roleclaim.ClaimType &nbsp; @roleclaim.ClaimValue
+                                                    </div>
+                                                }
+                                                @{
+                                                    string RemoveUserRoleButtonId = user.Id + "RemoveUserRoleClaimButton";
+                                                    <button id="@RemoveUserRoleButtonId" class="btn btn-danger btn-sm" onclick="showConfirmationModalForRoles('@Url.Action("RemoveRoleFromUser", "Home")', { addOrDelete:'Remove', userID: '@user.Id', roleName: '@role.IdentityRole.Name' });">Remove Role</button>
+                                                }
+                                            </div>
+                                            <br />
+                                        }
+                                    </div>
+                                    <div>
+                                        @{
+                                            string AddUserRoleButtonId = user.Id + "AddUserRoleButton";
+                                            <button id="@AddUserRoleButtonId" class="btn btn-success btn-sm" onclick="showConfirmationModalForRoles('@Url.Action("AddRoleToUser", "Home")', { addOrDelete:'Add', userID: '@user.Id' });">Add Role</button>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                </div>
+            </div>
+            <!--<div><a class="navItem" asp-area="" asp-controller="UserDetails" asp-action="Index" asp-route-userID="@user.Id">Details</a></div>-->
+        }
+        <div class="row">
+            <div class="col-12">
+                <button id="CreateUserButton" class="btn btn-success btn-sm" onclick="showConfirmationModalForUsers('@Url.Action("CreateUser", "Home")', { addOrDelete:'Add' });">Create User</button>
+            </div>
+        </div>
+    </div>
+</div>
