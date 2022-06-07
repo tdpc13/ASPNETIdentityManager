@@ -14,5 +14,7 @@ namespace ASPNETIdentityManager.Entities
         public List<Role> UserRoles { get; set; }
         [NotMapped]
         public List<IdentityUserClaim<string>> UserClaims { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }

@@ -1,0 +1,70 @@
+﻿@{
+    ViewData["Title"] = "Registrazione";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model LoginModel
+@using Microsoft.AspNetCore.Identity
+@using ASPNETIdentityManager.Entities
+@inject SignInManager<User> SignInManager
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <p>UserName
+                <input type="text" id="userName"></p>
+                <p>Nome
+                <input type="text" id="firstName"></p>
+                <p>Cognome
+                <input type="text" id="lastName"></p>
+                <p>Email
+                <input type="text" id="email"></p>
+                <p>Password
+                <input type="text" id="password"></p>
+                <p>conferma Password
+                <input type="text" id="confermaPassword"></p>
+                <button onclick="recuperaDati('@Url.Action("Registrati", "Home")', {button:'Ok' });" id="OKButton">Registrati</button>
+            </div>
+
+        </div>
+    </div>
+ <script>
+function recuperaDati(url, data) {
+
+    data.userName = document.getElementById("userName").value;
+    data.firstName = document.getElementById("firstName").value;
+    data.lastName = document.getElementById("lastName").value;
+    data.email = document.getElementById("email").value;
+    data.password = document.getElementById("password").value; 
+    data.confirmPassword = document.getElementById("confermaPassword").value; 
+    
+    OKButton = document.getElementById("OKButton");
+    OKButton.disabled = true;
+    $.ajax({
+        type: "POST",
+        url: url,
+        //contentType: "application/json; charset=utf-8",
+        data: data,
+        dataType: "json",
+        success: function (response, status) {
+            textP = document.createElement("p");
+            textP.style.textAlign = "center";
+            textP.innerText = response;
+            document.getElementById("modal-body").appendChild(textP);
+            this.always();
+        },
+        error: function (error, status) { this.always(); },
+        always: function () {
+            OKButton = document.getElementById("modalOKButton");
+            OKButton.disabled = false;
+            OKbutton.onclick = function () {
+                location = location;
+                //hideModal();
+            }
+            CancelButton = document.getElementById("modalCancelButton");
+            CancelButton.disabled = true;
+        }
+    });
+}
+
+ </script>
+    

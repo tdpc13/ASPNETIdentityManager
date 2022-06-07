@@ -48,8 +48,13 @@
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Login</a>
                         </li>
                     }
-                    
-                    @if (UserManager.GetUserName(User)=="admin")
+                    @if (!SignInManager.IsSignedIn(User))
+                    {
+                        <li class="nav-item active">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Registrazione">Registrazione</a>
+                        </li>
+                    }
+                    @if (UserManager.GetUserName(User)=="Admin")
                     {
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="GestisciPrenotazioni">Gestisci Prenotazioni</a>
